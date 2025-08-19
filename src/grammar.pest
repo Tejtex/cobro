@@ -1,0 +1,42 @@
+WHITESPACE = _{ " " | "\t" | NEWLINE | comment }
+comment = { "--" ~ (!NEWLINE ~ ANY)* }
+
+
+ident = @{ (ASCII_ALPHANUMERIC | "_")+ }
+
+number = @{ ASCII_DIGIT+ ~ ("." ~ ASCII_DIGIT+)? }
+
+program = {((ret_stmt | const_declaration | func_def) ~ ";") *}
+
+expr = { comp }
+
+comp = {add_sub ~ (comp_op ~ add_sub)*}
+comp_op = {"="}
+
+add_sub = { mul_div ~ (add_sub_op ~ mul_div)* }
+
+mul_div = { power ~ (mul_div_op~ power)* }
+
+power = { primary ~ (power_op ~ primary)* }
+
+func_call = { ident ~ "(" ~ expr ~ ( "," ~ expr)* ~ ")" }
+
+primary = { number | func_call | if_else |  ident | "(" ~ expr ~ ")" }
+add_sub_op = {"+" | "-"}
+mul_div_op = {"*" | "/" | "%"}
+power_op = {"^"}
+
+typ = { "N" | "R" | "Bool" | "Z" | "Q" | func_type }
+
+func_type = {"Func[" ~ typ ~ ("," ~ typ)* ~ "]"}
+
+func_def = {ident ~ "(" ~ args? ~ ")" ~ "->" ~ typ ~ "=" ~ expr}
+
+ret_stmt = {"ret" ~ expr}
+
+const_declaration = {ident ~"#" ~ typ ~ "=" ~ expr}
+
+args = {arg ~ ("," ~ arg )*}
+arg = {ident ~ "#" ~ typ}
+
+if_else = {"if" ~ expr ~ "then" ~ expr ~ "else" ~ expr}
