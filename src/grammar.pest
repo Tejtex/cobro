@@ -6,7 +6,7 @@ ident = @{ (ASCII_ALPHANUMERIC | "_")+ }
 
 number = @{ ASCII_DIGIT+ ~ ("." ~ ASCII_DIGIT+)? }
 
-program = {((ret_stmt | const_declaration | func_def) ~ ";") *}
+program = {SOI ~ ((ret_stmt | const_declaration | func_def) ~ ";") * ~ EOI}
 
 expr = { comp }
 
@@ -26,11 +26,13 @@ add_sub_op = {"+" | "-"}
 mul_div_op = {"*" | "/" | "%"}
 power_op = {"^"}
 
-typ = { "N" | "R" | "Bool" | "Z" | "Q" | func_type }
+typ = { "N" | "R" | "Bool" | "Z" | "Q" | func_type | range_type}
 
 func_type = {"Func[" ~ typ ~ ("," ~ typ)* ~ "]"}
 
 func_def = {ident ~ "(" ~ args? ~ ")" ~ "->" ~ typ ~ "=" ~ expr}
+
+range_type = {("(" | "[") ~ (number | "_") ~ "," ~(number |"_") ~ (")" | "]")}
 
 ret_stmt = {"ret" ~ expr}
 
